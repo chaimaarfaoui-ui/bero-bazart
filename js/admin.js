@@ -1,6 +1,16 @@
 // =========================================================
-// Admin panel: staff auth (invite-code signup), orders, product CRUD
+// Admin panel: staff login (accounts are created in Supabase dashboard), orders, product CRUD
 // =========================================================
+
+// Escapes text before it goes into innerHTML (orders come from the public, so never trust them)
+function escapeHTML(str) {
+  return String(str == null ? "" : str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
 let CURRENT_TAB = "orders";
 let EDITING_PRODUCT = null;
@@ -35,27 +45,6 @@ function showAdminShell() {
   loadSettingsIntoForm();
 }
 
-let AUTH_MODE = "login";
-
-function renderAuthBox() {
-  const title = document.getElementById("authTitle");
-  const inviteGroup = document.getElementById("inviteGroup");
-  const submitBtn = document.getElementById("authSubmitBtn");
-  const switchBtn = document.getElementById("authSwitchBtn");
-
-  if (AUTH_MODE === "login") {
-    title.textContent = t("admin_login_title");
-    inviteGroup.style.display = "none";
-    submitBtn.textContent = t("admin_login_btn");
-    switchBtn.textContent = t("admin_switch_to_signup");
-  } else {
-    title.textContent = t("admin_signup_title");
-    inviteGroup.style.display = "block";
-    submitBtn.textContent = t("admin_signup_btn");
-    switchBtn.textContent = t("admin_switch_to_login");
-  }
-}
-
 async function handleAuthSubmit(e) {
   e.preventDefault();
   const form = e.target;
@@ -64,34 +53,12 @@ async function handleAuthSubmit(e) {
   const errorEl = document.getElementById("authError");
   errorEl.textContent = "";
 
-  if (AUTH_MODE === "signup") {
-    const code = form.invite_code.value.trim();
-    const { data: setting, error: settingErr } = await supabaseClient
-      .from("settings")
-      .select("value")
-      .eq("key", "invite_code")
-      .single();
-
-    if (settingErr || !setting || setting.value !== code) {
-      errorEl.textContent = t("admin_invalid_code");
-      return;
-    }
-
-    const { error } = await supabaseClient.auth.signUp({ email, password });
-    if (error) {
-      errorEl.textContent = error.message;
-      return;
-    }
-    // if email confirmation is off, session exists immediately
-    checkAuth();
-  } else {
-    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if (error) {
-      errorEl.textContent = error.message;
-      return;
-    }
-    checkAuth();
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) {
+    errorEl.textContent = error.message;
+    return;
   }
+  checkAuth();
 }
 
 async function logout() {
@@ -134,21 +101,21 @@ function orderRowHTML(o) {
   <div class="order-row">
     <div class="order-row-head">
       <div>
-        <div class="oname">${o.customer_name} — ${o.city}</div>
+        <div class="oname">${escapeHTML(o.customer_name)} — ${escapeHTML(o.city)}</div>
         <div class="odate">${date}</div>
       </div>
-      <div>${fmtPrice(o.total)}</div>
+      <div>${fmtPrice(Number(o.total) || 0)}</div>
     </div>
     <div class="order-row-body">
-      <div class="order-detail-line"><span>${t("checkout_phone")}</span><span>${o.phone}</span></div>
-      <div class="order-detail-line"><span>${t("checkout_address")}</span><span>${o.address}</span></div>
-      ${o.note ? `<div class="order-detail-line"><span>${t("checkout_note")}</span><span>${o.note}</span></div>` : ""}
+      <div class="order-detail-line"><span>${t("checkout_phone")}</span><span>${escapeHTML(o.phone)}</span></div>
+      <div class="order-detail-line"><span>${t("checkout_address")}</span><span>${escapeHTML(o.address)}</span></div>
+      ${o.note ? `<div class="order-detail-line"><span>${t("checkout_note")}</span><span>${escapeHTML(o.note)}</span></div>` : ""}
       <div class="order-items-list">
         <strong>${t("admin_order_items")}:</strong>
-        ${items.map((it) => `<div>${it.qty} × ${it.name} ${it.size || it.color ? `(${[it.size, it.color].filter(Boolean).join(" / ")})` : ""} — ${fmtPrice(it.price * it.qty)}</div>`).join("")}
+        ${items.map((it) => `<div>${escapeHTML(it.qty)} × ${escapeHTML(it.name)} ${it.size || it.color ? `(${escapeHTML([it.size, it.color].filter(Boolean).join(" / "))})` : ""} — ${fmtPrice(Number(it.price) * Number(it.qty) || 0)}</div>`).join("")}
       </div>
-      <div class="order-detail-line"><span>${t("cart_delivery")}</span><span>${fmtPrice(o.delivery_fee || 0)}</span></div>
-      <div class="order-detail-line" style="font-weight:600"><span>${t("cart_total")}</span><span>${fmtPrice(o.total)}</span></div>
+      <div class="order-detail-line"><span>${t("cart_delivery")}</span><span>${fmtPrice(Number(o.delivery_fee) || 0)}</span></div>
+      <div class="order-detail-line" style="font-weight:600"><span>${t("cart_total")}</span><span>${fmtPrice(Number(o.total) || 0)}</span></div>
     </div>
   </div>`;
 }
@@ -177,10 +144,10 @@ function adminProductCardHTML(p) {
   const name = getLang() === "en" ? p.name_en || p.name_fr : p.name_fr;
   return `
   <div class="admin-product-card">
-    <img src="${img}" alt="" />
+    <img src="${escapeHTML(img)}" alt="" />
     <div class="admin-product-card-body">
-      <div class="apname">${name}</div>
-      <div class="apprice">${fmtPrice(p.price)}${p.sale_price ? ` → ${fmtPrice(p.sale_price)}` : ""} · ${p.category || "—"}</div>
+      <div class="apname">${escapeHTML(name)}</div>
+      <div class="apprice">${fmtPrice(p.price)}${p.sale_price ? ` → ${fmtPrice(p.sale_price)}` : ""} · ${escapeHTML(p.category) || "—"}</div>
       <div class="admin-product-actions">
         <button data-edit="${p.id}">${t("admin_edit_product")}</button>
         <button data-delete="${p.id}">${t("admin_delete_product")}</button>
@@ -227,7 +194,7 @@ function renderImagePreview() {
   const box = document.getElementById("uploadPreview");
   box.innerHTML = PENDING_IMAGES.map((img, i) => {
     const src = img.url || img.previewUrl;
-    return `<div class="rm"><img src="${src}" /><button type="button" data-rm="${i}">&times;</button></div>`;
+    return `<div class="rm"><img src="${escapeHTML(src)}" /><button type="button" data-rm="${i}">&times;</button></div>`;
   }).join("");
   box.querySelectorAll("[data-rm]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -305,9 +272,7 @@ async function handleProductSubmit(e) {
 async function loadSettingsIntoForm() {
   const { data } = await supabaseClient.from("settings").select("*");
   if (!data) return;
-  const invite = data.find((s) => s.key === "invite_code");
   const fee = data.find((s) => s.key === "delivery_fee");
-  if (invite) document.getElementById("inviteCodeDisplay").value = invite.value;
   if (fee) document.getElementById("deliveryFeeDisplay").value = fee.value;
 }
 
@@ -319,13 +284,8 @@ async function updateSetting(key, value) {
 
 document.addEventListener("DOMContentLoaded", () => {
   checkAuth();
-  renderAuthBox();
 
   document.getElementById("authForm").addEventListener("submit", handleAuthSubmit);
-  document.getElementById("authSwitchBtn").addEventListener("click", () => {
-    AUTH_MODE = AUTH_MODE === "login" ? "signup" : "login";
-    renderAuthBox();
-  });
   document.getElementById("logoutBtn").addEventListener("click", logout);
 
   document.querySelectorAll(".admin-tab").forEach((btn) =>
@@ -337,9 +297,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("productForm").addEventListener("submit", handleProductSubmit);
   document.getElementById("imageInput").addEventListener("change", handleImageSelect);
 
-  document.getElementById("saveInviteBtn").addEventListener("click", () => {
-    updateSetting("invite_code", document.getElementById("inviteCodeDisplay").value.trim());
-  });
   document.getElementById("saveFeeBtn").addEventListener("click", () => {
     updateSetting("delivery_fee", parseFloat(document.getElementById("deliveryFeeDisplay").value) || 0);
   });
@@ -348,7 +305,6 @@ document.addEventListener("DOMContentLoaded", () => {
 const _prevLangChangeAdmin = window.onLangChange || function () {};
 window.onLangChange = function () {
   _prevLangChangeAdmin();
-  renderAuthBox();
   if (document.getElementById("adminShell").style.display !== "none") {
     loadOrders();
     loadProductsAdmin();

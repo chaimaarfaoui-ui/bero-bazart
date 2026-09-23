@@ -72,7 +72,7 @@ create policy "Staff can read orders"
   to authenticated
   using (true);
 
--- ---------- SETTINGS (staff invite code + delivery fee) ----------
+-- ---------- SETTINGS (delivery fee) ----------
 create table if not exists settings (
   key text primary key,
   value text not null
@@ -80,12 +80,12 @@ create table if not exists settings (
 
 alter table settings enable row level security;
 
--- anyone can read settings (needed to check invite code / delivery fee at signup & checkout)
+-- anyone can read settings (needed for the delivery fee at checkout) — never store secrets here
 create policy "Public can read settings"
   on settings for select
   using (true);
 
--- only staff can change settings (so you can update the invite code / fee later from the admin panel)
+-- only staff can change settings (so the delivery fee can be updated from the admin panel)
 create policy "Staff can update settings"
   on settings for update
   to authenticated
@@ -96,9 +96,7 @@ create policy "Staff can insert settings"
   to authenticated
   with check (true);
 
--- seed the invite code (CHANGE THIS to whatever you want) and a placeholder delivery fee
-insert into settings (key, value) values ('invite_code', 'BERO2026')
-  on conflict (key) do nothing;
+-- placeholder delivery fee (staff accounts are created by hand in Supabase, no invite code)
 insert into settings (key, value) values ('delivery_fee', '7')
   on conflict (key) do nothing;
 
