@@ -59,6 +59,9 @@ const TRANSLATIONS = {
     empty_catalog_title: "Aucun produit pour le moment",
     empty_catalog_body: "La boutique ouvre bientôt — revenez vite !",
     loading: "Chargement…",
+    trust_delivery: "Livraison rapide et soignée",
+    trust_returns: "Retours faciles",
+    trust_service: "Service client attentif",
     // admin
     admin_login_title: "Connexion",
     admin_signup_title: "Créer un compte",
@@ -150,6 +153,9 @@ const TRANSLATIONS = {
     empty_catalog_title: "No products yet",
     empty_catalog_body: "The shop is opening soon — check back!",
     loading: "Loading…",
+    trust_delivery: "Fast, careful delivery",
+    trust_returns: "Easy returns",
+    trust_service: "Attentive customer service",
     // admin
     admin_login_title: "Log in",
     admin_signup_title: "Create account",
