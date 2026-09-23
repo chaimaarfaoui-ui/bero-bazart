@@ -118,7 +118,7 @@ function renderCartDrawer() {
 }
 
 function placeholderImg() {
-  return 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="260"><rect width="100%" height="100%" fill="%23EEE3D3"/></svg>';
+  return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='260'><rect width='100%25' height='100%25' fill='%23EEE3D3'/></svg>";
 }
 
 function openCart() {
