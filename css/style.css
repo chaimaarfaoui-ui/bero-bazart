@@ -734,6 +734,7 @@ footer.site-footer {
   }
   .footer-grid { grid-template-columns: 1fr; gap: 26px; }
   .moodboard { grid-template-columns: repeat(2, 1fr); }
+  .moodboard img, .moodboard .mood-block { aspect-ratio: 4/3; }
   .pdp { grid-template-columns: 1fr; gap: 30px; padding: 24px 18px 70px; }
   .form-row { grid-template-columns: 1fr; }
   .admin-product-grid { grid-template-columns: repeat(2, 1fr); }
