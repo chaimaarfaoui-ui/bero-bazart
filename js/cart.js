@@ -118,7 +118,7 @@ function renderCartDrawer() {
 }
 
 function placeholderImg() {
-  return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='260'><rect width='100%25' height='100%25' fill='%23EEE3D3'/></svg>";
+  return 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="260"><rect width="100%" height="100%" fill="%23EEE3D3"/></svg>';
 }
 
 function openCart() {
@@ -140,6 +140,20 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   document.getElementById("cartClose")?.addEventListener("click", closeCart);
   document.getElementById("cartOverlay")?.addEventListener("click", closeCart);
+
+  // mobile hamburger menu
+  const openMobileNav = () => {
+    document.getElementById("mobileNavDrawer")?.classList.add("open");
+    document.getElementById("mobileNavOverlay")?.classList.add("open");
+  };
+  const closeMobileNav = () => {
+    document.getElementById("mobileNavDrawer")?.classList.remove("open");
+    document.getElementById("mobileNavOverlay")?.classList.remove("open");
+  };
+  document.getElementById("hamburgerToggle")?.addEventListener("click", openMobileNav);
+  document.getElementById("mobileNavClose")?.addEventListener("click", closeMobileNav);
+  document.getElementById("mobileNavOverlay")?.addEventListener("click", closeMobileNav);
+  document.querySelectorAll("#mobileNavDrawer a").forEach((a) => a.addEventListener("click", closeMobileNav));
 });
 
 window.onLangChange = window.onLangChange || function () {};
