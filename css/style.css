@@ -721,7 +721,17 @@ footer.site-footer {
   nav.main-nav { display: none; }
   .hamburger-btn { display: block; }
   .product-grid { grid-template-columns: repeat(2, 1fr); gap: 20px 14px; padding: 0 18px; }
-  .promo-tiles { grid-template-columns: 1fr; }
+  .promo-tiles {
+    display: flex;
+    grid-template-columns: unset;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+  }
+  .promo-tiles .promo-tile {
+    flex: 0 0 78vw;
+    aspect-ratio: 4/5;
+    scroll-snap-align: start;
+  }
   .footer-grid { grid-template-columns: 1fr; gap: 26px; }
   .moodboard { grid-template-columns: repeat(2, 1fr); }
   .pdp { grid-template-columns: 1fr; gap: 30px; padding: 24px 18px 70px; }
