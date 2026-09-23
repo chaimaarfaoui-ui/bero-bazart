@@ -5,6 +5,16 @@
 let ALL_PRODUCTS = [];
 let ACTIVE_CATEGORY = "all";
 
+// Escapes a value so it can be safely dropped inside an HTML attribute
+// (prevents broken markup when an image URL or name contains quotes).
+function escapeAttr(str) {
+  return String(str == null ? "" : str)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 async function loadProducts() {
   const { data, error } = await supabaseClient
     .from("products")
@@ -38,7 +48,7 @@ function renderCategoryChips() {
   const cats = categories();
   rail.innerHTML =
     `<button class="chip ${ACTIVE_CATEGORY === "all" ? "active" : ""}" data-cat="all">${t("nav_all")}</button>` +
-    cats.map((c) => `<button class="chip ${ACTIVE_CATEGORY === c ? "active" : ""}" data-cat="${c}">${c}</button>`).join("");
+    cats.map((c) => `<button class="chip ${ACTIVE_CATEGORY === c ? "active" : ""}" data-cat="${escapeAttr(c)}">${c}</button>`).join("");
 
   rail.querySelectorAll(".chip").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -51,8 +61,9 @@ function renderCategoryChips() {
 }
 
 function productCardHTML(p) {
-  const img = (p.images && p.images[0]) || placeholderImg();
-  const img2 = (p.images && p.images[1]) || img;
+  const img = escapeAttr((p.images && p.images[0]) || placeholderImg());
+  const img2 = escapeAttr((p.images && p.images[1]) || (p.images && p.images[0]) || placeholderImg());
+  const name = escapeAttr(productName(p));
   const hasSale = p.sale_price && p.sale_price < p.price;
   const singleVariant = (p.sizes || []).length <= 1 && (p.colors || []).length <= 1;
 
@@ -60,7 +71,7 @@ function productCardHTML(p) {
   <div class="product-card">
     <a href="product.html?id=${p.id}">
       <div class="product-card-media">
-        <img src="${img}" alt="${productName(p)}" />
+        <img src="${img}" alt="${name}" />
         <img src="${img2}" alt="" class="hover-img" />
         ${hasSale ? `<span class="badge-sale">${t("price")} -${Math.round((1 - p.sale_price / p.price) * 100)}%</span>` : ""}
       </div>
@@ -69,7 +80,7 @@ function productCardHTML(p) {
       ${singleVariant ? t("add_to_cart") : t("choose_options")}
     </button>
     <div class="product-card-info">
-      <div class="product-card-name">${productName(p)}</div>
+      <div class="product-card-name">${name}</div>
       <div class="product-card-price">
         ${hasSale
           ? `<span class="price-sale">${fmtPrice(p.sale_price)}</span><span class="price-strike">${fmtPrice(p.price)}</span>`

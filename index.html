@@ -46,14 +46,22 @@
   <a href="index.html#shop" data-i18n="nav_shop">Boutique</a>
   <a href="index.html#new" data-i18n="section_new">Nouveautés</a>
   <a href="#footer-contact" data-i18n="nav_contact">Contact</a>
+  <div class="mobile-nav-label" data-i18n="section_shop_by_category">Par catégorie</div>
+  <div id="mobileCategoryList" class="mobile-category-list"></div>
 </div>
 
 <section class="hero" id="new">
+  <div class="hero-slides" id="heroSlides">
+    <div class="hero-slide active" style="background-image:url('images/hero-1.jpg')"></div>
+    <div class="hero-slide" style="background-image:url('images/hero-2.jpg')"></div>
+    <div class="hero-slide" style="background-image:url('images/hero-3.jpg')"></div>
+  </div>
   <div class="hero-content">
     <div class="hero-eyebrow" data-i18n="brand_tagline">Mode & Élégance</div>
     <h1>Une garde-robe pensée pour vous, entre douceur et caractère.</h1>
     <a href="#shop" class="btn btn-primary" data-i18n="hero_cta">Découvrir la collection</a>
   </div>
+  <div class="hero-dots" id="heroDots"></div>
 </section>
 
 <div class="trust-badges">
@@ -101,13 +109,6 @@
     <p data-i18n="empty_catalog_body">La boutique ouvre bientôt — revenez vite !</p>
   </div>
 </section>
-
-<div class="moodboard">
-  <div class="mood-block">Bero Bazart</div>
-  <div class="mood-block">Fait avec soin</div>
-  <div class="mood-block">Élégance discrète</div>
-  <div class="mood-block">Livraison locale</div>
-</div>
 
 <section class="newsletter">
   <h2 data-i18n="footer_newsletter_title">Restez informée</h2>
@@ -162,5 +163,69 @@
 <script src="js/cart.js"></script>
 <script src="js/main.js"></script>
 <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+<script>
+// Hero slideshow — auto-rotates the background images every 5s with a crossfade.
+(function () {
+  const slides = document.querySelectorAll("#heroSlides .hero-slide");
+  const dotsWrap = document.getElementById("heroDots");
+  if (!slides.length) return;
+
+  let current = 0;
+
+  slides.forEach((_, i) => {
+    const dot = document.createElement("button");
+    dot.className = "hero-dot" + (i === 0 ? " active" : "");
+    dot.addEventListener("click", () => goTo(i));
+    dotsWrap.appendChild(dot);
+  });
+  const dots = dotsWrap.querySelectorAll(".hero-dot");
+
+  function goTo(i) {
+    slides[current].classList.remove("active");
+    dots[current].classList.remove("active");
+    current = i;
+    slides[current].classList.add("active");
+    dots[current].classList.add("active");
+  }
+
+  let timer = setInterval(() => goTo((current + 1) % slides.length), 5000);
+
+  dotsWrap.addEventListener("click", () => {
+    clearInterval(timer);
+    timer = setInterval(() => goTo((current + 1) % slides.length), 5000);
+  });
+})();
+</script>
+<script>
+// Mirrors the "Par catégorie" chips into the hamburger menu, so tapping
+// a category there jumps to the shop section and applies the same filter.
+(function () {
+  const source = document.getElementById("categoryChips");
+  const target = document.getElementById("mobileCategoryList");
+  const drawer = document.getElementById("mobileNavDrawer");
+  const overlay = document.getElementById("mobileNavOverlay");
+  if (!source || !target) return;
+
+  function sync() {
+    target.innerHTML = "";
+    source.querySelectorAll(".chip").forEach((chip) => {
+      const btn = document.createElement("button");
+      btn.className = "chip" + (chip.classList.contains("active") ? " active" : "");
+      btn.textContent = chip.textContent;
+      btn.addEventListener("click", () => {
+        chip.click();
+        drawer.classList.remove("open");
+        overlay.classList.remove("open");
+        const shop = document.getElementById("shop");
+        if (shop) shop.scrollIntoView({ behavior: "smooth" });
+      });
+      target.appendChild(btn);
+    });
+  }
+
+  sync();
+  new MutationObserver(sync).observe(source, { childList: true, subtree: true, attributes: true });
+})();
+</script>
 </body>
 </html>

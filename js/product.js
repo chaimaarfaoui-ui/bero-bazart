@@ -5,6 +5,16 @@
 let CURRENT_PRODUCT = null;
 let SELECTED = { size: "", color: "", qty: 1, imgIndex: 0 };
 
+// Escapes a value so it can be safely dropped inside an HTML attribute
+// (prevents broken markup when an image URL or name contains quotes).
+function escapeAttr(str) {
+  return String(str == null ? "" : str)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 function getProductId() {
   return new URLSearchParams(window.location.search).get("id");
 }
@@ -36,14 +46,15 @@ function pDesc(p) {
 
 function renderProduct() {
   const p = CURRENT_PRODUCT;
-  const images = p.images && p.images.length ? p.images : [placeholderImg()];
+  const images = (p.images && p.images.length ? p.images : [placeholderImg()]).map(escapeAttr);
+  const name = escapeAttr(pName(p));
   const hasSale = p.sale_price && p.sale_price < p.price;
   document.title = pName(p) + " — Bero Bazart";
 
   document.getElementById("pdpRoot").innerHTML = `
     <div class="pdp">
       <div class="pdp-gallery">
-        <div class="pdp-gallery-main"><img id="pdpMainImg" src="${images[SELECTED.imgIndex]}" alt="${pName(p)}" /></div>
+        <div class="pdp-gallery-main"><img id="pdpMainImg" src="${images[SELECTED.imgIndex]}" alt="${name}" /></div>
         <div class="pdp-thumbs">
           ${images.map((img, i) => `<img src="${img}" class="${i === SELECTED.imgIndex ? "active" : ""}" data-i="${i}" />`).join("")}
         </div>
@@ -60,7 +71,7 @@ function renderProduct() {
         <div class="pdp-option-group">
           <div class="pdp-option-label">${t("size")}</div>
           <div class="option-pills" id="sizePills">
-            ${p.sizes.map((s) => `<button class="option-pill ${s === SELECTED.size ? "active" : ""}" data-size="${s}">${s}</button>`).join("")}
+            ${p.sizes.map((s) => `<button class="option-pill ${s === SELECTED.size ? "active" : ""}" data-size="${escapeAttr(s)}">${s}</button>`).join("")}
           </div>
         </div>` : ""}
 
@@ -68,7 +79,7 @@ function renderProduct() {
         <div class="pdp-option-group">
           <div class="pdp-option-label">${t("color")}</div>
           <div class="option-pills" id="colorPills">
-            ${p.colors.map((c) => `<button class="option-pill ${c === SELECTED.color ? "active" : ""}" data-color="${c}">${c}</button>`).join("")}
+            ${p.colors.map((c) => `<button class="option-pill ${c === SELECTED.color ? "active" : ""}" data-color="${escapeAttr(c)}">${c}</button>`).join("")}
           </div>
         </div>` : ""}
 
@@ -152,11 +163,12 @@ async function loadRelated() {
   }
   rail.innerHTML = data
     .map((p) => {
-      const img = (p.images && p.images[0]) || placeholderImg();
+      const img = escapeAttr((p.images && p.images[0]) || placeholderImg());
+      const name = escapeAttr(pName(p));
       return `<a href="product.html?id=${p.id}" class="product-card">
-        <div class="product-card-media"><img src="${img}" alt="${pName(p)}" /></div>
+        <div class="product-card-media"><img src="${img}" alt="${name}" /></div>
         <div class="product-card-info">
-          <div class="product-card-name">${pName(p)}</div>
+          <div class="product-card-name">${name}</div>
           <div class="product-card-price">${fmtPrice(p.price)}</div>
         </div>
       </a>`;
