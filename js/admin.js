@@ -53,12 +53,49 @@ async function handleAuthSubmit(e) {
   const errorEl = document.getElementById("authError");
   errorEl.textContent = "";
 
+  if (AUTH_MODE === "signup") {
+    // check the invite code against the one saved in settings
+    const { data: row } = await supabaseClient.from("settings").select("value").eq("key", "invite_code").maybeSingle();
+    const code = form.invite.value.trim();
+    if (!row || !code || code !== row.value) {
+      errorEl.textContent = t("admin_invalid_code");
+      return;
+    }
+    const { data, error } = await supabaseClient.auth.signUp({ email, password });
+    if (error) {
+      errorEl.textContent = error.message;
+      return;
+    }
+    if (!data.session) {
+      // email confirmation is on in Supabase: they must click the link in their inbox first
+      errorEl.textContent = getLang() === "en" ? "Account created. Check your email to confirm, then log in." : "Compte créé. Vérifiez votre e-mail pour confirmer, puis connectez-vous.";
+      setAuthMode("login");
+      return;
+    }
+    checkAuth();
+    return;
+  }
+
   const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
   if (error) {
     errorEl.textContent = error.message;
     return;
   }
   checkAuth();
+}
+
+let AUTH_MODE = "login";
+
+function setAuthMode(mode) {
+  AUTH_MODE = mode;
+  const signup = mode === "signup";
+  document.getElementById("inviteGroup").style.display = signup ? "block" : "none";
+  document.getElementById("authTitle").setAttribute("data-i18n", signup ? "admin_signup_title" : "admin_login_title");
+  document.getElementById("authSubmitBtn").setAttribute("data-i18n", signup ? "admin_signup_btn" : "admin_login_btn");
+  document.getElementById("authSwitch").setAttribute("data-i18n", signup ? "admin_switch_to_login" : "admin_switch_to_signup");
+  document.getElementById("authTitle").textContent = t(signup ? "admin_signup_title" : "admin_login_title");
+  document.getElementById("authSubmitBtn").textContent = t(signup ? "admin_signup_btn" : "admin_login_btn");
+  document.getElementById("authSwitch").textContent = t(signup ? "admin_switch_to_login" : "admin_switch_to_signup");
 }
 
 async function logout() {
@@ -274,10 +311,12 @@ async function loadSettingsIntoForm() {
   if (!data) return;
   const fee = data.find((s) => s.key === "delivery_fee");
   if (fee) document.getElementById("deliveryFeeDisplay").value = fee.value;
+  const inv = data.find((s) => s.key === "invite_code");
+  if (inv) document.getElementById("inviteCodeDisplay").value = inv.value;
 }
 
 async function updateSetting(key, value) {
-  await supabaseClient.from("settings").update({ value: String(value) }).eq("key", key);
+  await supabaseClient.from("settings").upsert({ key, value: String(value) });
 }
 
 // ---------- INIT ----------
@@ -287,6 +326,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("authForm").addEventListener("submit", handleAuthSubmit);
   document.getElementById("logoutBtn").addEventListener("click", logout);
+  document.getElementById("authSwitch").addEventListener("click", (e) => {
+    e.preventDefault();
+    document.getElementById("authError").textContent = "";
+    setAuthMode(AUTH_MODE === "login" ? "signup" : "login");
+  });
+  document.getElementById("saveInviteBtn").addEventListener("click", () => {
+    const v = document.getElementById("inviteCodeDisplay").value.trim();
+    if (v) updateSetting("invite_code", v);
+  });
 
   document.querySelectorAll(".admin-tab").forEach((btn) =>
     btn.addEventListener("click", () => switchTab(btn.getAttribute("data-tab")))

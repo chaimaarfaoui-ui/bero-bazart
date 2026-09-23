@@ -36,9 +36,16 @@
       <label data-i18n="admin_password">Mot de passe</label>
       <input type="password" name="password" required minlength="6" />
     </div>
+    <div class="form-group" id="inviteGroup" style="display:none">
+      <label data-i18n="admin_invite_code">Code d'invitation</label>
+      <input type="text" name="invite" autocomplete="off" />
+    </div>
     <button type="submit" class="btn btn-primary btn-block" id="authSubmitBtn" data-i18n="admin_login_btn">Se connecter</button>
     <div class="auth-error" id="authError"></div>
   </form>
+  <p style="text-align:center; margin-top:16px;">
+    <a href="#" id="authSwitch" data-i18n="admin_switch_to_signup">Nouveau membre de l'équipe ? Créer un compte</a>
+  </p>
 </div>
 
 <!-- ADMIN SHELL -->
@@ -60,6 +67,14 @@
 
   <!-- PRODUCTS -->
   <div id="productsPanel" style="display:none">
+    <div class="settings-box">
+      <div class="form-group">
+        <label data-i18n="admin_invite_settings">Code d'invitation actuel</label>
+        <input type="text" id="inviteCodeDisplay" />
+      </div>
+      <button class="btn btn-outline" id="saveInviteBtn" data-i18n="admin_update">Mettre à jour</button>
+    </div>
+
     <div class="settings-box">
       <div class="form-group">
         <label data-i18n="admin_delivery_settings">Frais de livraison</label>
