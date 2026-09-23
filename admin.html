@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Espace équipe — Bero Bazart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">Bero Bazart<small>Espace équipe</small></a>
+    <div class="header-actions">
+      <div class="lang-toggle">
+        <button data-lang="fr">FR</button>
+        <button data-lang="en">EN</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- AUTH -->
+<div id="authBox" class="auth-box">
+  <h2 id="authTitle" data-i18n="admin_login_title">Connexion</h2>
+  <form id="authForm">
+    <div class="form-group">
+      <label data-i18n="admin_email">E-mail</label>
+      <input type="email" name="email" required />
+    </div>
+    <div class="form-group">
+      <label data-i18n="admin_password">Mot de passe</label>
+      <input type="password" name="password" required minlength="6" />
+    </div>
+    <div class="form-group" id="inviteGroup" style="display:none">
+      <label data-i18n="admin_invite_code">Code d'invitation</label>
+      <input type="text" name="invite_code" />
+    </div>
+    <button type="submit" class="btn btn-primary btn-block" id="authSubmitBtn" data-i18n="admin_login_btn">Se connecter</button>
+    <div class="auth-error" id="authError"></div>
+  </form>
+  <div class="auth-switch">
+    <button type="button" id="authSwitchBtn" data-i18n="admin_switch_to_signup">Nouveau membre de l'équipe ? Créer un compte</button>
+  </div>
+</div>
+
+<!-- ADMIN SHELL -->
+<div id="adminShell" class="admin-shell" style="display:none">
+  <div class="admin-topbar">
+    <h1 style="font-size:1.6rem;">Bero Bazart</h1>
+    <button class="btn btn-outline" id="logoutBtn" data-i18n="admin_logout">Se déconnecter</button>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="admin-tab active" data-tab="orders" data-i18n="admin_orders_tab">Commandes</button>
+    <button class="admin-tab" data-tab="products" data-i18n="admin_products_tab">Produits</button>
+  </div>
+
+  <!-- ORDERS -->
+  <div id="ordersPanel">
+    <div id="ordersList"></div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div id="productsPanel" style="display:none">
+    <div class="settings-box">
+      <div class="form-group">
+        <label data-i18n="admin_invite_settings">Code d'invitation actuel</label>
+        <input type="text" id="inviteCodeDisplay" />
+      </div>
+      <button class="btn btn-outline" id="saveInviteBtn" data-i18n="admin_update">Mettre à jour</button>
+
+      <div class="form-group">
+        <label data-i18n="admin_delivery_settings">Frais de livraison</label>
+        <input type="number" step="0.01" id="deliveryFeeDisplay" />
+      </div>
+      <button class="btn btn-outline" id="saveFeeBtn" data-i18n="admin_update">Mettre à jour</button>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; margin-bottom:18px;">
+      <button class="btn btn-primary" id="addProductBtn" data-i18n="admin_add_product">Ajouter un produit</button>
+    </div>
+    <div class="admin-product-grid" id="adminProductGrid"></div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-box">
+    <h3 id="modalTitle" data-i18n="admin_add_product">Ajouter un produit</h3>
+    <form id="productForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label data-i18n="admin_name_fr">Nom (Français)</label>
+          <input type="text" name="name_fr" required />
+        </div>
+        <div class="form-group">
+          <label data-i18n="admin_name_en">Nom (Anglais)</label>
+          <input type="text" name="name_en" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label data-i18n="admin_desc_fr">Description (Français)</label>
+        <textarea name="description_fr" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label data-i18n="admin_desc_en">Description (Anglais)</label>
+        <textarea name="description_en" rows="2"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label data-i18n="admin_category">Catégorie</label>
+          <input type="text" name="category" />
+        </div>
+        <div class="form-group">
+          <label data-i18n="price">Prix</label>
+          <input type="number" step="0.01" name="price" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Prix promo (optionnel)</label>
+        <input type="number" step="0.01" name="sale_price" />
+      </div>
+      <div class="form-group">
+        <label data-i18n="admin_sizes">Tailles (séparées par une virgule)</label>
+        <input type="text" name="sizes" placeholder="S, M, L, XL" />
+      </div>
+      <div class="form-group">
+        <label data-i18n="admin_colors">Couleurs (séparées par une virgule)</label>
+        <input type="text" name="colors" placeholder="Noir, Beige" />
+      </div>
+      <div class="form-group">
+        <label data-i18n="admin_images">Photos</label>
+        <input type="file" id="imageInput" accept="image/*" multiple />
+        <div class="upload-preview" id="uploadPreview"></div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:24px;">
+        <button type="submit" class="btn btn-primary" id="productSaveBtn" data-i18n="admin_save">Enregistrer</button>
+        <button type="button" class="btn btn-outline" id="productModalClose" data-i18n="admin_cancel">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

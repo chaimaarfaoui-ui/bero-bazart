@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bero Bazart — Mode & Élégance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="announce" data-i18n="brand_tagline">Mode & Élégance</div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">Bero Bazart<small data-i18n="brand_tagline">Mode & Élégance</small></a>
+    <nav class="main-nav">
+      <a href="index.html#shop" data-i18n="nav_shop">Boutique</a>
+      <a href="index.html#new" data-i18n="section_new">Nouveautés</a>
+      <a href="#footer-contact" data-i18n="nav_contact">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <div class="lang-toggle">
+        <button data-lang="fr">FR</button>
+        <button data-lang="en">EN</button>
+      </div>
+      <a href="admin.html" class="icon-btn" title="Espace équipe">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+      </a>
+      <button class="icon-btn" id="cartToggle" title="Panier">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="cart-count">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero" id="new">
+  <div class="hero-content">
+    <div class="hero-eyebrow" data-i18n="brand_tagline">Mode & Élégance</div>
+    <h1>Une garde-robe pensée pour vous, entre douceur et caractère.</h1>
+    <a href="#shop" class="btn btn-primary" data-i18n="hero_cta">Découvrir la collection</a>
+  </div>
+</section>
+
+<div class="promo-tiles">
+  <a href="#shop" class="promo-tile">
+    <div class="promo-tile-text"><h3>Abayas</h3><span data-i18n="view_all">Voir tout</span></div>
+  </a>
+  <a href="#shop" class="promo-tile">
+    <div class="promo-tile-text"><h3>Robes</h3><span data-i18n="view_all">Voir tout</span></div>
+  </a>
+  <a href="#shop" class="promo-tile">
+    <div class="promo-tile-text"><h3>Foulards</h3><span data-i18n="view_all">Voir tout</span></div>
+  </a>
+</div>
+
+<section class="section">
+  <div class="section-head">
+    <h2 data-i18n="section_new">Nouveautés</h2>
+  </div>
+  <div class="product-rail" id="newInRail"></div>
+</section>
+
+<section class="section" id="shop">
+  <div class="section-head">
+    <h2 data-i18n="section_shop_by_category">Par catégorie</h2>
+  </div>
+  <div class="chip-rail" id="categoryChips"></div>
+  <div class="product-grid" id="shopGrid"></div>
+  <div class="empty-state" id="emptyState" style="display:none">
+    <h3 data-i18n="empty_catalog_title">Aucun produit pour le moment</h3>
+    <p data-i18n="empty_catalog_body">La boutique ouvre bientôt — revenez vite !</p>
+  </div>
+</section>
+
+<div class="moodboard">
+  <div class="mood-block">Bero Bazart</div>
+  <div class="mood-block">Fait avec soin</div>
+  <div class="mood-block">Élégance discrète</div>
+  <div class="mood-block">Livraison locale</div>
+</div>
+
+<section class="newsletter">
+  <h2 data-i18n="footer_newsletter_title">Restez informée</h2>
+  <p data-i18n="footer_newsletter_body">Nouveautés, promotions et inspirations directement dans votre boîte mail.</p>
+  <form class="newsletter-form" onsubmit="event.preventDefault(); this.reset(); this.querySelector('button').textContent='✓';">
+    <input type="email" required data-i18n-placeholder="footer_newsletter_placeholder" placeholder="Votre e-mail" />
+    <button type="submit" data-i18n="footer_newsletter_btn">S'inscrire</button>
+  </form>
+</section>
+
+<footer class="site-footer" id="footer-contact">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>Bero Bazart</h4>
+      <p style="max-width:280px; color:var(--ink-soft);">Mode modeste, coupes soignées, tissus choisis avec attention.</p>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="footer_shop">Boutique</h4>
+      <a href="#shop" data-i18n="nav_all">Tout</a>
+      <a href="#new" data-i18n="section_new">Nouveautés</a>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="footer_help">Aide</h4>
+      <a href="https://www.instagram.com/bero_bazart/" target="_blank" rel="noopener">Instagram</a>
+      <a href="admin.html" data-i18n="nav_admin">Espace équipe</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="year"></span> Bero Bazart. <span data-i18n="footer_rights">Tous droits réservés.</span></span>
+  </div>
+</footer>
+
+<div id="cartOverlay"></div>
+<div id="cartDrawer">
+  <div class="cart-drawer-head">
+    <h3 data-i18n="cart_title">Votre panier</h3>
+    <button id="cartClose">&times;</button>
+  </div>
+  <div id="cartDrawerBody"></div>
+  <div id="cartDrawerFooter" style="display:none">
+    <div class="cart-total-row">
+      <span data-i18n="cart_subtotal">Sous-total</span>
+      <span id="cartSubtotal">0.00 DT</span>
+    </div>
+    <a href="checkout.html" class="btn btn-primary btn-block" data-i18n="cart_checkout">Passer la commande</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/main.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

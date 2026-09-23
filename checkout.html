@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title data-i18n="checkout_title">Finaliser la commande — Bero Bazart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">Bero Bazart<small data-i18n="brand_tagline">Mode & Élégance</small></a>
+    <div class="header-actions">
+      <div class="lang-toggle">
+        <button data-lang="fr">FR</button>
+        <button data-lang="en">EN</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div id="checkoutPage" class="form-page">
+  <h1 data-i18n="checkout_title" style="margin-bottom:28px;">Finaliser la commande</h1>
+
+  <div>
+    <h3 style="font-size:1rem; margin-bottom:12px; font-family:var(--font-body); font-weight:600;" data-i18n="checkout_order_summary">Récapitulatif</h3>
+    <div class="order-summary-box" id="orderSummary"></div>
+  </div>
+
+  <form id="checkoutForm" novalidate>
+    <div class="form-group">
+      <label data-i18n="checkout_name">Nom complet</label>
+      <input type="text" name="name" required />
+      <div class="field-error" data-i18n="checkout_required">Ce champ est obligatoire.</div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label data-i18n="checkout_phone">Téléphone</label>
+        <input type="tel" name="phone" required />
+        <div class="field-error" data-i18n="checkout_required">Ce champ est obligatoire.</div>
+      </div>
+      <div class="form-group">
+        <label data-i18n="checkout_city">Ville</label>
+        <input type="text" name="city" required />
+        <div class="field-error" data-i18n="checkout_required">Ce champ est obligatoire.</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label data-i18n="checkout_address">Adresse</label>
+      <input type="text" name="address" required />
+      <div class="field-error" data-i18n="checkout_required">Ce champ est obligatoire.</div>
+    </div>
+    <div class="form-group">
+      <label data-i18n="checkout_note">Note (optionnel)</label>
+      <textarea name="note" rows="3" data-i18n-placeholder="checkout_note_placeholder" placeholder="Instructions de livraison, préférences…"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block" data-i18n="checkout_submit">Confirmer la commande</button>
+  </form>
+</div>
+
+<div id="successPage" class="form-page" style="display:none">
+  <div class="success-box">
+    <h2 data-i18n="checkout_success_title">Merci pour votre commande !</h2>
+    <p data-i18n="checkout_success_body">Nous vous contacterons bientôt pour confirmer la livraison.</p>
+    <a href="index.html" class="btn btn-primary" data-i18n="checkout_back_home">Retour à la boutique</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/checkout.js"></script>
+</body>
+</html>
