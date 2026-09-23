@@ -103,6 +103,13 @@ header.site-header {
   white-space: nowrap;
 }
 
+.logo-img {
+  height: 52px;
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
+}
+
 .logo small {
   display: block;
   font-family: var(--font-body);
