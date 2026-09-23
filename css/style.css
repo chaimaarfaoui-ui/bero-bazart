@@ -427,6 +427,7 @@ nav.main-nav a:hover { border-bottom-color: var(--camel); }
   gap: 2px;
   background: var(--line);
 }
+.promo-tiles { grid-template-columns: repeat(5, 1fr); }
 .promo-tile {
   position: relative;
   aspect-ratio: 3/4;

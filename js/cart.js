@@ -141,6 +141,29 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("cartClose")?.addEventListener("click", closeCart);
   document.getElementById("cartOverlay")?.addEventListener("click", closeCart);
 
+  // search bar open/close (shared by every page that has it)
+  const searchBar = document.getElementById("searchBar");
+  const searchInput = document.getElementById("searchInput");
+  function closeSearch() {
+    if (!searchBar) return;
+    searchBar.classList.remove("open");
+    if (searchInput && searchInput.value) {
+      searchInput.value = "";
+      searchInput.dispatchEvent(new Event("input"));
+    }
+  }
+  document.getElementById("searchToggle")?.addEventListener("click", () => {
+    if (!searchBar) return;
+    if (searchBar.classList.contains("open")) {
+      closeSearch();
+    } else {
+      searchBar.classList.add("open");
+      setTimeout(() => searchInput?.focus(), 250);
+    }
+  });
+  document.getElementById("searchClose")?.addEventListener("click", closeSearch);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSearch(); });
+
   // mobile hamburger menu
   const openMobileNav = () => {
     document.getElementById("mobileNavDrawer")?.classList.add("open");

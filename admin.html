@@ -116,7 +116,11 @@
       <div class="form-row">
         <div class="form-group">
           <label data-i18n="admin_category">Catégorie</label>
-          <input type="text" name="category" />
+          <input type="text" name="category" list="categoryList" autocomplete="off" />
+          <datalist id="categoryList">
+            <option value="Abayas"><option value="Robes"><option value="Robes de soirée">
+            <option value="Foulards"><option value="Sacs &amp; Accessoires"><option value="Kimonos">
+          </datalist>
         </div>
         <div class="form-group">
           <label data-i18n="price">Prix</label>
@@ -124,7 +128,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label>Prix promo (optionnel)</label>
+        <label data-i18n="admin_sale_price">Prix promo (optionnel)</label>
         <input type="number" step="0.01" name="sale_price" />
       </div>
       <div class="form-group">

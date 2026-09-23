@@ -16,10 +16,10 @@
 <header class="site-header">
   <div class="header-inner">
     <div class="header-side header-side-left">
-      <button class="hamburger-btn" id="hamburgerToggle" title="Menu">
+      <button class="hamburger-btn" id="hamburgerToggle" title="Menu" data-i18n-title="tip_menu">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
-      <button class="icon-btn" id="searchToggle" title="Rechercher">
+      <button class="icon-btn" id="searchToggle" title="Rechercher" data-i18n-title="tip_search">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       </button>
     </div>
@@ -31,11 +31,11 @@
         <button data-lang="fr">FR</button>
         <button data-lang="en">EN</button>
       </div>
-      <button class="icon-btn" id="wishlistToggle" title="Liste d'envies">
+      <button class="icon-btn" id="wishlistToggle" title="Liste d'envies" data-i18n-title="tip_wishlist">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20s-7-4.35-9.5-8.8C.8 7.9 2.6 4.5 6 4.5c2 0 3.4 1.1 4 2.3.6-1.2 2-2.3 4-2.3 3.4 0 5.2 3.4 3.5 6.7C19 15.65 12 20 12 20Z"/></svg>
         <span class="wishlist-count">0</span>
       </button>
-      <button class="icon-btn" id="cartToggle" title="Panier">
+      <button class="icon-btn" id="cartToggle" title="Panier" data-i18n-title="tip_cart">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
         <span class="cart-count">0</span>
       </button>
@@ -45,7 +45,7 @@
   <div class="search-bar" id="searchBar">
     <div class="search-bar-inner">
       <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Rechercher…" />
-      <button id="searchClose" title="Fermer">&times;</button>
+      <button id="searchClose" title="Fermer" data-i18n-title="tip_close">&times;</button>
     </div>
   </div>
 </header>
@@ -53,7 +53,7 @@
 <div id="mobileNavOverlay"></div>
 <div id="mobileNavDrawer">
   <button class="mobile-nav-close" id="mobileNavClose">&times;</button>
-  <a href="index.html#shop" data-i18n="nav_shop">Boutique</a>
+  <a href="index.html#shop" data-shop-cat="all" data-i18n="nav_shop">Boutique</a>
   <a href="index.html#new" data-i18n="section_new">Nouveautés</a>
   <a href="#footer-contact" data-i18n="nav_contact">Contact</a>
   <div class="mobile-nav-label" data-i18n="section_shop_by_category">Par catégorie</div>
@@ -68,7 +68,7 @@
   </div>
   <div class="hero-content">
     <div class="hero-eyebrow" data-i18n="brand_tagline">Mode & Élégance</div>
-    <h1>Une garde-robe pensée pour vous, entre douceur et caractère.</h1>
+    <h1 data-i18n="hero_title">Une garde-robe pensée pour vous, entre douceur et caractère.</h1>
     <a href="#shop" class="btn btn-primary" data-i18n="hero_cta">Découvrir la collection</a>
   </div>
   <div class="hero-dots" id="heroDots"></div>
@@ -90,14 +90,20 @@
 </div>
 
 <div class="promo-tiles">
-  <a href="#shop" class="promo-tile">
-    <div class="promo-tile-text"><h3>Abayas</h3><span data-i18n="view_all">Voir tout</span></div>
+  <a href="#shop" class="promo-tile" data-shop-cat="Abayas">
+    <div class="promo-tile-text"><h3 data-i18n="cat_abayas">Abayas</h3><span data-i18n="view_all">Voir tout</span></div>
   </a>
-  <a href="#shop" class="promo-tile">
-    <div class="promo-tile-text"><h3>Robes</h3><span data-i18n="view_all">Voir tout</span></div>
+  <a href="#shop" class="promo-tile" data-shop-cat="Robes">
+    <div class="promo-tile-text"><h3 data-i18n="cat_robes">Robes</h3><span data-i18n="view_all">Voir tout</span></div>
   </a>
-  <a href="#shop" class="promo-tile">
-    <div class="promo-tile-text"><h3>Foulards</h3><span data-i18n="view_all">Voir tout</span></div>
+  <a href="#shop" class="promo-tile" data-shop-cat="Robes de soirée">
+    <div class="promo-tile-text"><h3 data-i18n="cat_soiree">Robes de soirée</h3><span data-i18n="view_all">Voir tout</span></div>
+  </a>
+  <a href="#shop" class="promo-tile" data-shop-cat="Foulards">
+    <div class="promo-tile-text"><h3 data-i18n="cat_foulards">Foulards</h3><span data-i18n="view_all">Voir tout</span></div>
+  </a>
+  <a href="#shop" class="promo-tile" data-shop-cat="Sacs &amp; Accessoires">
+    <div class="promo-tile-text"><h3 data-i18n="cat_sacs">Sacs &amp; Accessoires</h3><span data-i18n="view_all">Voir tout</span></div>
   </a>
 </div>
 
@@ -133,11 +139,11 @@
   <div class="footer-grid">
     <div class="footer-col">
       <h4>Bero Bazart</h4>
-      <p style="max-width:280px; color:var(--ink-soft);">Mode modeste, coupes soignées, tissus choisis avec attention.</p>
+      <p data-i18n="footer_blurb" style="max-width:280px; color:var(--ink-soft);">Mode modeste, coupes soignées, tissus choisis avec attention.</p>
     </div>
     <div class="footer-col">
       <h4 data-i18n="footer_shop">Boutique</h4>
-      <a href="#shop" data-i18n="nav_all">Tout</a>
+      <a href="#shop" data-shop-cat="all" data-i18n="nav_all">Tout</a>
       <a href="#new" data-i18n="section_new">Nouveautés</a>
     </div>
     <div class="footer-col">

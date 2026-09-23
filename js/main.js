@@ -4,6 +4,30 @@
 
 let ALL_PRODUCTS = [];
 let ACTIVE_CATEGORY = "all";
+let SEARCH_QUERY = "";
+
+// lowercase + strip accents so "robe" matches "Robé" and "ABAYA" matches "abaya"
+function norm(str) {
+  return String(str == null ? "" : str).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
+
+function matchesSearch(p) {
+  if (!SEARCH_QUERY) return true;
+  const hay = norm([p.name_fr, p.name_en, p.description_fr, p.description_en, p.category].join(" "));
+  return norm(SEARCH_QUERY).split(/\s+/).every((w) => hay.includes(w));
+}
+
+// Filters the shop by a category (used by the promo tiles, footer link, hamburger menu)
+function applyCategory(cat) {
+  const match = cat === "all" ? "all" : categories().find((c) => norm(c) === norm(cat)) || cat;
+  ACTIVE_CATEGORY = match;
+  SEARCH_QUERY = "";
+  const input = document.getElementById("searchInput");
+  if (input) input.value = "";
+  renderCategoryChips();
+  renderGrid();
+  document.getElementById("shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
 // Escapes a value so it can be safely dropped inside an HTML attribute
 // (prevents broken markup when an image URL or name contains quotes).
@@ -73,7 +97,7 @@ function productCardHTML(p) {
       <div class="product-card-media">
         <img src="${img}" alt="${name}" />
         <img src="${img2}" alt="" class="hover-img" />
-        ${hasSale ? `<span class="badge-sale">${t("price")} -${Math.round((1 - p.sale_price / p.price) * 100)}%</span>` : ""}
+        ${hasSale ? `<span class="badge-sale">-${Math.round((1 - p.sale_price / p.price) * 100)}%</span>` : ""}
       </div>
     </a>
     <button class="wishlist-heart ${isInWishlist(p.id) ? "active" : ""}" data-wishlist-id="${p.id}" title="${t("add_to_wishlist")}">
@@ -152,7 +176,9 @@ function renderGrid() {
   const grid = document.getElementById("shopGrid");
   const empty = document.getElementById("emptyState");
   if (!grid) return;
-  const items = ACTIVE_CATEGORY === "all" ? ALL_PRODUCTS : ALL_PRODUCTS.filter((p) => p.category === ACTIVE_CATEGORY);
+  const items = ALL_PRODUCTS.filter(
+    (p) => (ACTIVE_CATEGORY === "all" || p.category === ACTIVE_CATEGORY) && matchesSearch(p)
+  );
 
   if (ALL_PRODUCTS.length === 0) {
     grid.innerHTML = "";
@@ -160,12 +186,50 @@ function renderGrid() {
     return;
   }
   if (empty) empty.style.display = "none";
+  if (items.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>${t("no_results")}</h3></div>`;
+    return;
+  }
   grid.innerHTML = items.map(productCardHTML).join("");
   bindQuickAdd(grid);
   bindWishlistHearts(grid);
 }
 
-document.addEventListener("DOMContentLoaded", loadProducts);
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadProducts();
+
+  // promo tiles + "Tout" links filter the shop by category
+  document.querySelectorAll("[data-shop-cat]").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      applyCategory(el.getAttribute("data-shop-cat"));
+    });
+  });
+
+  // live search
+  const input = document.getElementById("searchInput");
+  input?.addEventListener("input", () => {
+    SEARCH_QUERY = input.value;
+    if (SEARCH_QUERY) {
+      ACTIVE_CATEGORY = "all";
+      renderCategoryChips();
+    }
+    renderGrid();
+  });
+  input?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") document.getElementById("shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  // arriving from the product page's search box (index.html?q=...)
+  const q = new URLSearchParams(window.location.search).get("q");
+  if (q && input) {
+    input.value = q;
+    SEARCH_QUERY = q;
+    document.getElementById("searchBar")?.classList.add("open");
+    renderGrid();
+    document.getElementById("shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+});
 
 const _prevLangChangeMain = window.onLangChange || function () {};
 window.onLangChange = function () {

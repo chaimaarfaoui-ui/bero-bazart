@@ -67,6 +67,20 @@ const TRANSLATIONS = {
     add_to_wishlist: "Ajouter à ma liste",
     remove_from_wishlist: "Retirer de ma liste",
     search_placeholder: "Rechercher…",
+    no_results: "Aucun résultat pour cette recherche.",
+    hero_title: "Une garde-robe pensée pour vous, entre douceur et caractère.",
+    footer_blurb: "Mode modeste, coupes soignées, tissus choisis avec attention.",
+    cat_abayas: "Abayas",
+    cat_robes: "Robes",
+    cat_foulards: "Foulards",
+    cat_soiree: "Robes de soirée",
+    cat_sacs: "Sacs & Accessoires",
+    tip_menu: "Menu",
+    tip_search: "Rechercher",
+    tip_close: "Fermer",
+    tip_wishlist: "Liste d'envies",
+    tip_cart: "Panier",
+    admin_sale_price: "Prix promo (optionnel)",
     // admin
     admin_login_title: "Connexion",
     admin_signup_title: "Créer un compte",
@@ -166,6 +180,20 @@ const TRANSLATIONS = {
     add_to_wishlist: "Add to wishlist",
     remove_from_wishlist: "Remove from wishlist",
     search_placeholder: "Search…",
+    no_results: "No results for this search.",
+    hero_title: "A wardrobe made for you, between softness and character.",
+    footer_blurb: "Modest fashion, careful cuts, fabrics chosen with care.",
+    cat_abayas: "Abayas",
+    cat_robes: "Dresses",
+    cat_foulards: "Hijabs",
+    cat_soiree: "Evening Dresses",
+    cat_sacs: "Bags & Accessories",
+    tip_menu: "Menu",
+    tip_search: "Search",
+    tip_close: "Close",
+    tip_wishlist: "Wishlist",
+    tip_cart: "Cart",
+    admin_sale_price: "Sale price (optional)",
     // admin
     admin_login_title: "Log in",
     admin_signup_title: "Create account",
@@ -229,6 +257,9 @@ function applyTranslations() {
   });
   document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
     el.setAttribute("placeholder", t(el.getAttribute("data-i18n-placeholder")));
+  });
+  document.querySelectorAll("[data-i18n-title]").forEach((el) => {
+    el.setAttribute("title", t(el.getAttribute("data-i18n-title")));
   });
   document.querySelectorAll(".lang-toggle [data-lang]").forEach((btn) => {
     btn.classList.toggle("active", btn.getAttribute("data-lang") === lang);
