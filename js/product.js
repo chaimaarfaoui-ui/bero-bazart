@@ -90,7 +90,12 @@ function renderProduct() {
           <button id="qtyPlus">&plus;</button>
         </div>
 
-        <button class="btn btn-primary btn-block" id="pdpAddBtn" data-i18n="add_to_cart">${t("add_to_cart")}</button>
+        <div class="pdp-actions">
+          <button class="btn btn-primary btn-block" id="pdpAddBtn" data-i18n="add_to_cart">${t("add_to_cart")}</button>
+          <button class="wishlist-heart-btn ${isInWishlist(p.id) ? "active" : ""}" id="pdpWishlistBtn" data-wishlist-id="${p.id}" title="${t("add_to_wishlist")}">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20s-7-4.35-9.5-8.8C.8 7.9 2.6 4.5 6 4.5c2 0 3.4 1.1 4 2.3.6-1.2 2-2.3 4-2.3 3.4 0 5.2 3.4 3.5 6.7C19 15.65 12 20 12 20Z"/></svg>
+          </button>
+        </div>
 
         <div class="pdp-desc">${pDesc(p)}</div>
       </div>
@@ -142,6 +147,16 @@ function bindPdpEvents() {
       size: SELECTED.size,
       color: SELECTED.color,
       qty: SELECTED.qty,
+      image: (p.images || [])[0] || "",
+    });
+  });
+  document.getElementById("pdpWishlistBtn").addEventListener("click", () => {
+    const p = CURRENT_PRODUCT;
+    toggleWishlist({
+      id: p.id,
+      name_fr: p.name_fr,
+      name_en: p.name_en,
+      price: p.sale_price && p.sale_price < p.price ? p.sale_price : p.price,
       image: (p.images || [])[0] || "",
     });
   });

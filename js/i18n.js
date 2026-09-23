@@ -62,6 +62,11 @@ const TRANSLATIONS = {
     trust_delivery: "Livraison rapide et soignée",
     trust_returns: "Retours faciles",
     trust_service: "Service client attentif",
+    wishlist_title: "Ma liste d'envies",
+    wishlist_empty: "Votre liste d'envies est vide.",
+    add_to_wishlist: "Ajouter à ma liste",
+    remove_from_wishlist: "Retirer de ma liste",
+    search_placeholder: "Rechercher…",
     // admin
     admin_login_title: "Connexion",
     admin_signup_title: "Créer un compte",
@@ -156,6 +161,11 @@ const TRANSLATIONS = {
     trust_delivery: "Fast, careful delivery",
     trust_returns: "Easy returns",
     trust_service: "Attentive customer service",
+    wishlist_title: "My wishlist",
+    wishlist_empty: "Your wishlist is empty.",
+    add_to_wishlist: "Add to wishlist",
+    remove_from_wishlist: "Remove from wishlist",
+    search_placeholder: "Search…",
     // admin
     admin_login_title: "Log in",
     admin_signup_title: "Create account",

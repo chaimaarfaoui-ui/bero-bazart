@@ -76,6 +76,9 @@ function productCardHTML(p) {
         ${hasSale ? `<span class="badge-sale">${t("price")} -${Math.round((1 - p.sale_price / p.price) * 100)}%</span>` : ""}
       </div>
     </a>
+    <button class="wishlist-heart ${isInWishlist(p.id) ? "active" : ""}" data-wishlist-id="${p.id}" title="${t("add_to_wishlist")}">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20s-7-4.35-9.5-8.8C.8 7.9 2.6 4.5 6 4.5c2 0 3.4 1.1 4 2.3.6-1.2 2-2.3 4-2.3 3.4 0 5.2 3.4 3.5 6.7C19 15.65 12 20 12 20Z"/></svg>
+    </button>
     <button class="product-card-quickadd" data-id="${p.id}">
       ${singleVariant ? t("add_to_cart") : t("choose_options")}
     </button>
@@ -118,12 +121,31 @@ function bindQuickAdd(container) {
   });
 }
 
+function bindWishlistHearts(container) {
+  container.querySelectorAll(".wishlist-heart").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const p = ALL_PRODUCTS.find((x) => x.id === btn.getAttribute("data-wishlist-id"));
+      if (!p) return;
+      toggleWishlist({
+        id: p.id,
+        name_fr: p.name_fr,
+        name_en: p.name_en,
+        price: p.sale_price && p.sale_price < p.price ? p.sale_price : p.price,
+        image: (p.images || [])[0] || "",
+      });
+    });
+  });
+}
+
 function renderNewInRail() {
   const rail = document.getElementById("newInRail");
   if (!rail) return;
   const items = ALL_PRODUCTS.slice(0, 10);
   rail.innerHTML = items.map(productCardHTML).join("");
   bindQuickAdd(rail);
+  bindWishlistHearts(rail);
 }
 
 function renderGrid() {
@@ -140,6 +162,7 @@ function renderGrid() {
   if (empty) empty.style.display = "none";
   grid.innerHTML = items.map(productCardHTML).join("");
   bindQuickAdd(grid);
+  bindWishlistHearts(grid);
 }
 
 document.addEventListener("DOMContentLoaded", loadProducts);
