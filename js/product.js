@@ -97,6 +97,7 @@ function renderProduct() {
           </button>
         </div>
 
+        <p class="policy-note policy-note-left">${t("delivery_note")} ${t("no_exchange")}</p>
         <div class="pdp-desc">${pDesc(p)}</div>
       </div>
     </div>
@@ -191,7 +192,15 @@ async function loadRelated() {
     .join("");
 }
 
-document.addEventListener("DOMContentLoaded", loadProduct);
+document.addEventListener("DOMContentLoaded", () => {
+  loadProduct();
+  // no product list on this page, so searching sends you to the shop with the query
+  document.getElementById("searchInput")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && e.target.value.trim()) {
+      window.location.href = "index.html?q=" + encodeURIComponent(e.target.value.trim());
+    }
+  });
+});
 
 const _prevLangChangePdp = window.onLangChange || function () {};
 window.onLangChange = function () {

@@ -953,3 +953,8 @@ html { scroll-padding-top: 70px; }
   .logo-img { height: 78px; }
   header.site-header.scrolled .logo-img { height: 54px; }
 }
+
+/* ---------- Store policy notes ---------- */
+.policy-note { font-size: 0.85rem; color: var(--ink-soft); text-align: center; margin: 4px 0 14px; }
+.policy-note-left { text-align: left; margin: 14px 0 0; }
+.footer-note { display: block; color: var(--ink-soft); font-size: 0.9rem; margin-top: 8px; }
