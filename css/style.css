@@ -423,11 +423,13 @@ nav.main-nav a:hover { border-bottom-color: var(--camel); }
 /* ---------- Promo tiles ---------- */
 .promo-tiles {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
-  background: var(--line);
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 32px;
 }
-.promo-tiles { grid-template-columns: repeat(5, 1fr); }
+.promo-tile { border-radius: var(--radius-sm); }
 .promo-tile {
   position: relative;
   aspect-ratio: 3/4;
@@ -505,7 +507,19 @@ nav.main-nav a:hover { border-bottom-color: var(--camel); }
   max-width: var(--container);
   margin: 0 auto;
   scroll-snap-type: x proximity;
+  scroll-padding: 0 32px;
 }
+.rail-arrows { display: flex; gap: 8px; }
+.rail-arrows button {
+  width: 38px; height: 38px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  border-radius: 50%;
+  font-size: 1.3rem; line-height: 1;
+  cursor: pointer;
+  color: var(--ink);
+}
+.rail-arrows button:hover { background: var(--ink); color: var(--white); }
 .product-rail .product-card { flex: 0 0 260px; scroll-snap-align: start; }
 
 .product-card { position: relative; }
@@ -896,7 +910,12 @@ footer.site-footer {
     grid-template-columns: unset;
     overflow-x: auto;
     scroll-snap-type: x proximity;
+    padding: 0 18px;
+    gap: 10px;
+    scroll-padding: 0 18px;
   }
+  .product-rail { scroll-padding: 0 18px; }
+  .rail-arrows { display: none; }
   .promo-tiles .promo-tile {
     flex: 0 0 78vw;
     aspect-ratio: 4/5;
@@ -916,7 +935,21 @@ footer.site-footer {
   .wrap, .section-head, .chip-rail { padding-left: 18px; padding-right: 18px; }
 }
 @media (max-width: 560px) {
+  .header-inner { padding: 12px 10px; gap: 4px; }
+  .header-side { gap: 2px; }
+  .logo-word { font-size: 0.95rem; letter-spacing: 0.06em; }
   .product-grid { grid-template-columns: repeat(2, 1fr); gap: 16px 12px; }
   .admin-product-grid { grid-template-columns: 1fr 1fr; }
   .hero { min-height: 62vh; }
+}
+/* ---------- Logo image (falls back to the text if images/logo.png is missing) ---------- */
+.logo-word .logo-text { display: none; }
+.logo-word.no-logo .logo-text { display: inline; }
+.logo-img { display: block; height: 112px; width: auto; max-width: 100%; transition: height 0.25s ease; }
+header.site-header.scrolled .logo-img { height: 68px; }
+header.site-header:has(.logo-img) .header-inner { padding-top: 4px; padding-bottom: 4px; }
+html { scroll-padding-top: 70px; }
+@media (max-width: 900px) {
+  .logo-img { height: 78px; }
+  header.site-header.scrolled .logo-img { height: 54px; }
 }

@@ -141,6 +141,18 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("cartClose")?.addEventListener("click", closeCart);
   document.getElementById("cartOverlay")?.addEventListener("click", closeCart);
 
+  // header stays pinned on scroll (CSS sticky); the logo shrinks a little once you scroll down
+  const siteHeader = document.querySelector(".site-header");
+  if (siteHeader) {
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y > 60) siteHeader.classList.add("scrolled");
+      else if (y < 10) siteHeader.classList.remove("scrolled");
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
+
   // search bar open/close (shared by every page that has it)
   const searchBar = document.getElementById("searchBar");
   const searchInput = document.getElementById("searchInput");

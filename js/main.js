@@ -206,6 +206,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
+  // arrows on the "Nouveautés" rail (a mouse can't scroll sideways easily on PC)
+  const rail = document.getElementById("newInRail");
+  document.getElementById("railPrev")?.addEventListener("click", () => rail.scrollBy({ left: -560, behavior: "smooth" }));
+  document.getElementById("railNext")?.addEventListener("click", () => rail.scrollBy({ left: 560, behavior: "smooth" }));
+
   // live search
   const input = document.getElementById("searchInput");
   input?.addEventListener("input", () => {
