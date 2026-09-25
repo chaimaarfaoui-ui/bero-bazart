@@ -60,7 +60,7 @@ function renderProduct() {
         </div>
       </div>
       <div class="pdp-info">
-        <h1>${pName(p)}</h1>
+        <h1>${escapeHTML(pName(p))}</h1>
         <div class="pdp-price">
           ${hasSale
             ? `<span class="price-sale">${fmtPrice(p.sale_price)}</span><span class="price-strike">${fmtPrice(p.price)}</span>`
@@ -71,7 +71,7 @@ function renderProduct() {
         <div class="pdp-option-group">
           <div class="pdp-option-label">${t("size")}</div>
           <div class="option-pills" id="sizePills">
-            ${p.sizes.map((s) => `<button class="option-pill ${s === SELECTED.size ? "active" : ""}" data-size="${escapeAttr(s)}">${s}</button>`).join("")}
+            ${p.sizes.map((s) => `<button class="option-pill ${s === SELECTED.size ? "active" : ""}" data-size="${escapeAttr(s)}">${escapeHTML(s)}</button>`).join("")}
           </div>
         </div>` : ""}
 
@@ -79,7 +79,7 @@ function renderProduct() {
         <div class="pdp-option-group">
           <div class="pdp-option-label">${t("color")}</div>
           <div class="option-pills" id="colorPills">
-            ${p.colors.map((c) => `<button class="option-pill ${c === SELECTED.color ? "active" : ""}" data-color="${escapeAttr(c)}">${c}</button>`).join("")}
+            ${p.colors.map((c) => `<button class="option-pill ${c === SELECTED.color ? "active" : ""}" data-color="${escapeAttr(c)}">${escapeHTML(c)}</button>`).join("")}
           </div>
         </div>` : ""}
 
@@ -92,13 +92,13 @@ function renderProduct() {
 
         <div class="pdp-actions">
           <button class="btn btn-primary btn-block" id="pdpAddBtn" data-i18n="add_to_cart">${t("add_to_cart")}</button>
-          <button class="wishlist-heart-btn ${isInWishlist(p.id) ? "active" : ""}" id="pdpWishlistBtn" data-wishlist-id="${p.id}" title="${t("add_to_wishlist")}">
+          <button class="wishlist-heart-btn ${isInWishlist(p.id) ? "active" : ""}" id="pdpWishlistBtn" data-wishlist-id="${escapeAttr(p.id)}" title="${t("add_to_wishlist")}">
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20s-7-4.35-9.5-8.8C.8 7.9 2.6 4.5 6 4.5c2 0 3.4 1.1 4 2.3.6-1.2 2-2.3 4-2.3 3.4 0 5.2 3.4 3.5 6.7C19 15.65 12 20 12 20Z"/></svg>
           </button>
         </div>
 
         <p class="policy-note policy-note-left">${t("delivery_note")} ${t("no_exchange")}</p>
-        <div class="pdp-desc">${pDesc(p)}</div>
+        <div class="pdp-desc">${escapeHTML(pDesc(p))}</div>
       </div>
     </div>
     <section class="section">
@@ -181,7 +181,7 @@ async function loadRelated() {
     .map((p) => {
       const img = escapeAttr((p.images && p.images[0]) || placeholderImg());
       const name = escapeAttr(pName(p));
-      return `<a href="product.html?id=${p.id}" class="product-card">
+      return `<a href="product.html?id=${encodeURIComponent(p.id)}" class="product-card">
         <div class="product-card-media"><img src="${img}" alt="${name}" /></div>
         <div class="product-card-info">
           <div class="product-card-name">${name}</div>

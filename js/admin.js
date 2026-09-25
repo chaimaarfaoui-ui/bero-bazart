@@ -25,16 +25,49 @@ async function getSession() {
 
 async function checkAuth() {
   const session = await getSession();
-  if (session) {
-    showAdminShell();
-  } else {
+  if (!session) {
     showAuthBox();
+    return;
   }
+  // logged in is not enough: the account must be on the staff list (checked by the database)
+  const { data: isStaff } = await supabaseClient.rpc("is_staff");
+  if (isStaff === true) {
+    localStorage.removeItem("bero_pending_invite");
+    showAdminShell();
+    return;
+  }
+  const pending = localStorage.getItem("bero_pending_invite");
+  if (pending) {
+    localStorage.removeItem("bero_pending_invite");
+    if (await claimCode(pending)) {
+      showAdminShell();
+      return;
+    }
+  }
+  showClaimBox();
+}
+
+// asks the database to check the invite code and make this account staff
+async function claimCode(code) {
+  const errorEl = document.getElementById("authError");
+  const { data, error } = await supabaseClient.rpc("claim_staff", { p_code: code });
+  if (error) {
+    if (errorEl) errorEl.textContent = String(error.message).includes("too_many_attempts") ? t("admin_too_many") : t("admin_error_generic");
+    return false;
+  }
+  return data === true;
+}
+
+function showClaimBox() {
+  document.getElementById("authBox").style.display = "block";
+  document.getElementById("adminShell").style.display = "none";
+  setAuthMode("claim");
 }
 
 function showAuthBox() {
   document.getElementById("authBox").style.display = "block";
   document.getElementById("adminShell").style.display = "none";
+  setAuthMode("login");
 }
 
 function showAdminShell() {
@@ -53,11 +86,18 @@ async function handleAuthSubmit(e) {
   const errorEl = document.getElementById("authError");
   errorEl.textContent = "";
 
+  if (AUTH_MODE === "claim") {
+    if (await claimCode(form.invite.value.trim())) {
+      checkAuth();
+    } else if (!errorEl.textContent) {
+      errorEl.textContent = t("admin_invalid_code");
+    }
+    return;
+  }
+
   if (AUTH_MODE === "signup") {
-    // check the invite code against the one saved in settings
-    const { data: row } = await supabaseClient.from("settings").select("value").eq("key", "invite_code").maybeSingle();
     const code = form.invite.value.trim();
-    if (!row || !code || code !== row.value) {
+    if (!code) {
       errorEl.textContent = t("admin_invalid_code");
       return;
     }
@@ -67,9 +107,15 @@ async function handleAuthSubmit(e) {
       return;
     }
     if (!data.session) {
-      // email confirmation is on in Supabase: they must click the link in their inbox first
-      errorEl.textContent = getLang() === "en" ? "Account created. Check your email to confirm, then log in." : "Compte créé. Vérifiez votre e-mail pour confirmer, puis connectez-vous.";
+      // email confirmation is on: remember the code, it is checked after their first login
+      localStorage.setItem("bero_pending_invite", code);
       setAuthMode("login");
+      errorEl.textContent = t("admin_confirm_email");
+      return;
+    }
+    if (!(await claimCode(code))) {
+      if (!errorEl.textContent) errorEl.textContent = t("admin_invalid_code");
+      showClaimBox();
       return;
     }
     checkAuth();
@@ -89,13 +135,23 @@ let AUTH_MODE = "login";
 function setAuthMode(mode) {
   AUTH_MODE = mode;
   const signup = mode === "signup";
-  document.getElementById("inviteGroup").style.display = signup ? "block" : "none";
-  document.getElementById("authTitle").setAttribute("data-i18n", signup ? "admin_signup_title" : "admin_login_title");
-  document.getElementById("authSubmitBtn").setAttribute("data-i18n", signup ? "admin_signup_btn" : "admin_login_btn");
-  document.getElementById("authSwitch").setAttribute("data-i18n", signup ? "admin_switch_to_login" : "admin_switch_to_signup");
-  document.getElementById("authTitle").textContent = t(signup ? "admin_signup_title" : "admin_login_title");
-  document.getElementById("authSubmitBtn").textContent = t(signup ? "admin_signup_btn" : "admin_login_btn");
-  document.getElementById("authSwitch").textContent = t(signup ? "admin_switch_to_login" : "admin_switch_to_signup");
+  const claim = mode === "claim";
+  const form = document.getElementById("authForm");
+  document.getElementById("inviteGroup").style.display = signup || claim ? "block" : "none";
+  document.getElementById("emailGroup").style.display = claim ? "none" : "block";
+  document.getElementById("passwordGroup").style.display = claim ? "none" : "block";
+  form.email.disabled = claim;
+  form.password.disabled = claim;
+  form.password.minLength = signup ? 10 : 0;
+  form.password.autocomplete = signup ? "new-password" : "current-password";
+  const titleKey = claim ? "admin_claim_title" : signup ? "admin_signup_title" : "admin_login_title";
+  const btnKey = claim ? "admin_claim_btn" : signup ? "admin_signup_btn" : "admin_login_btn";
+  const switchKey = claim ? "admin_logout" : signup ? "admin_switch_to_login" : "admin_switch_to_signup";
+  [["authTitle", titleKey], ["authSubmitBtn", btnKey], ["authSwitch", switchKey]].forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    el.setAttribute("data-i18n", key);
+    el.textContent = t(key);
+  });
 }
 
 async function logout() {
@@ -311,12 +367,13 @@ async function loadSettingsIntoForm() {
   if (!data) return;
   const fee = data.find((s) => s.key === "delivery_fee");
   if (fee) document.getElementById("deliveryFeeDisplay").value = fee.value;
-  const inv = data.find((s) => s.key === "invite_code");
-  if (inv) document.getElementById("inviteCodeDisplay").value = inv.value;
+  const { data: code } = await supabaseClient.rpc("get_invite_code");
+  if (code) document.getElementById("inviteCodeDisplay").value = code;
 }
 
 async function updateSetting(key, value) {
-  await supabaseClient.from("settings").upsert({ key, value: String(value) });
+  const { error } = await supabaseClient.from("settings").upsert({ key, value: String(value) });
+  if (error) alert(t("admin_error_generic"));
 }
 
 // ---------- INIT ----------
@@ -329,11 +386,15 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("authSwitch").addEventListener("click", (e) => {
     e.preventDefault();
     document.getElementById("authError").textContent = "";
-    setAuthMode(AUTH_MODE === "login" ? "signup" : "login");
+    if (AUTH_MODE === "claim") logout();
+    else setAuthMode(AUTH_MODE === "login" ? "signup" : "login");
   });
   document.getElementById("saveInviteBtn").addEventListener("click", () => {
     const v = document.getElementById("inviteCodeDisplay").value.trim();
-    if (v) updateSetting("invite_code", v);
+    if (!v) return;
+    supabaseClient.rpc("set_invite_code", { p_code: v }).then(({ error }) => {
+      alert(error ? t("admin_invite_short") : "OK");
+    });
   });
 
   document.querySelectorAll(".admin-tab").forEach((btn) =>

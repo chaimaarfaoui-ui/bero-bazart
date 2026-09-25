@@ -4,6 +4,16 @@
 // this file is only for site chrome: nav, buttons, checkout, messages.
 // =========================================================
 
+// Escapes text before it goes into innerHTML (product/order text is never trusted)
+function escapeHTML(str) {
+  return String(str == null ? "" : str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 const TRANSLATIONS = {
   fr: {
     brand_tagline: "Mode & Élégance",
@@ -122,6 +132,12 @@ const TRANSLATIONS = {
     admin_update: "Mettre à jour",
     admin_invalid_code: "Code d'invitation invalide.",
     admin_error_generic: "Une erreur est survenue. Réessayez.",
+    admin_claim_title: "Activer mon compte",
+    admin_claim_btn: "Activer",
+    admin_confirm_email: "Compte créé. Vérifiez votre e-mail pour confirmer, puis connectez-vous et entrez le code d'invitation.",
+    admin_too_many: "Trop d'essais. Réessayez dans une heure.",
+    admin_invite_short: "Le code doit contenir au moins 10 caractères.",
+    order_rate_limited: "Trop de commandes récentes. Réessayez plus tard ou contactez-nous.",
   },
   en: {
     brand_tagline: "Fashion & Elegance",
@@ -240,6 +256,12 @@ const TRANSLATIONS = {
     admin_update: "Update",
     admin_invalid_code: "Invalid invite code.",
     admin_error_generic: "Something went wrong. Please try again.",
+    admin_claim_title: "Activate my account",
+    admin_claim_btn: "Activate",
+    admin_confirm_email: "Account created. Check your email to confirm, then log in and enter the invite code.",
+    admin_too_many: "Too many attempts. Try again in an hour.",
+    admin_invite_short: "The code must be at least 10 characters.",
+    order_rate_limited: "Too many recent orders. Please try later or contact us.",
   },
 };
 

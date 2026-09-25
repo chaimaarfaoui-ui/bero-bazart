@@ -72,7 +72,7 @@ function renderCategoryChips() {
   const cats = categories();
   rail.innerHTML =
     `<button class="chip ${ACTIVE_CATEGORY === "all" ? "active" : ""}" data-cat="all">${t("nav_all")}</button>` +
-    cats.map((c) => `<button class="chip ${ACTIVE_CATEGORY === c ? "active" : ""}" data-cat="${escapeAttr(c)}">${c}</button>`).join("");
+    cats.map((c) => `<button class="chip ${ACTIVE_CATEGORY === c ? "active" : ""}" data-cat="${escapeAttr(c)}">${escapeHTML(c)}</button>`).join("");
 
   rail.querySelectorAll(".chip").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -93,17 +93,17 @@ function productCardHTML(p) {
 
   return `
   <div class="product-card">
-    <a href="product.html?id=${p.id}">
+    <a href="product.html?id=${encodeURIComponent(p.id)}">
       <div class="product-card-media">
         <img src="${img}" alt="${name}" />
         <img src="${img2}" alt="" class="hover-img" />
         ${hasSale ? `<span class="badge-sale">-${Math.round((1 - p.sale_price / p.price) * 100)}%</span>` : ""}
       </div>
     </a>
-    <button class="wishlist-heart ${isInWishlist(p.id) ? "active" : ""}" data-wishlist-id="${p.id}" title="${t("add_to_wishlist")}">
+    <button class="wishlist-heart ${isInWishlist(p.id) ? "active" : ""}" data-wishlist-id="${escapeAttr(p.id)}" title="${t("add_to_wishlist")}">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20s-7-4.35-9.5-8.8C.8 7.9 2.6 4.5 6 4.5c2 0 3.4 1.1 4 2.3.6-1.2 2-2.3 4-2.3 3.4 0 5.2 3.4 3.5 6.7C19 15.65 12 20 12 20Z"/></svg>
     </button>
-    <button class="product-card-quickadd" data-id="${p.id}">
+    <button class="product-card-quickadd" data-id="${escapeAttr(p.id)}">
       ${singleVariant ? t("add_to_cart") : t("choose_options")}
     </button>
     <div class="product-card-info">

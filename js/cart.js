@@ -96,20 +96,26 @@ function renderCartDrawer() {
       const key = lineKey(item);
       return `
       <div class="cart-line">
-        <img src="${item.image || placeholderImg()}" alt="" class="cart-line-img" />
+        <img src="${escapeHTML(item.image || placeholderImg())}" alt="" class="cart-line-img" />
         <div class="cart-line-info">
-          <div class="cart-line-name">${productDisplayName(item)}</div>
-          <div class="cart-line-meta">${[item.size, item.color].filter(Boolean).join(" / ")}</div>
+          <div class="cart-line-name">${escapeHTML(productDisplayName(item))}</div>
+          <div class="cart-line-meta">${escapeHTML([item.size, item.color].filter(Boolean).join(" / "))}</div>
           <div class="cart-line-row">
-            <input type="number" min="1" value="${item.qty}" class="qty-input"
-              onchange="updateCartQty('${key}', parseInt(this.value)||1)" />
+            <input type="number" min="1" value="${Number(item.qty) || 1}" class="qty-input" data-key="${escapeHTML(key)}" />
             <span class="cart-line-price">${fmtPrice(item.price * item.qty)}</span>
           </div>
-          <button class="cart-line-remove" onclick="removeFromCart('${key}')">${t("cart_remove")}</button>
+          <button class="cart-line-remove" data-remove="${escapeHTML(key)}">${t("cart_remove")}</button>
         </div>
       </div>`;
     })
     .join("");
+
+  body.querySelectorAll(".qty-input").forEach((inp) =>
+    inp.addEventListener("change", () => updateCartQty(inp.dataset.key, parseInt(inp.value) || 1))
+  );
+  body.querySelectorAll(".cart-line-remove").forEach((btn) =>
+    btn.addEventListener("click", () => removeFromCart(btn.dataset.remove))
+  );
 
   if (footer) {
     footer.style.display = "block";

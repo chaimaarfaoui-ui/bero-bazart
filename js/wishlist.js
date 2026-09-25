@@ -87,17 +87,21 @@ function renderWishlistDrawer() {
     .map((item) => {
       return `
       <div class="cart-line">
-        <img src="${item.image || placeholderImg()}" alt="" class="cart-line-img" />
+        <img src="${escapeHTML(item.image || placeholderImg())}" alt="" class="cart-line-img" />
         <div class="cart-line-info">
-          <div class="cart-line-name">${wishlistDisplayName(item)}</div>
+          <div class="cart-line-name">${escapeHTML(wishlistDisplayName(item))}</div>
           <div class="cart-line-row">
             <span class="cart-line-price">${fmtPrice(item.price)}</span>
           </div>
-          <button class="cart-line-remove" onclick="removeFromWishlist('${item.id}')">${t("remove_from_wishlist")}</button>
+          <button class="cart-line-remove" data-remove-id="${escapeHTML(item.id)}">${t("remove_from_wishlist")}</button>
         </div>
       </div>`;
     })
     .join("");
+
+  body.querySelectorAll("[data-remove-id]").forEach((btn) =>
+    btn.addEventListener("click", () => removeFromWishlist(btn.dataset.removeId))
+  );
 }
 
 function openWishlist() {

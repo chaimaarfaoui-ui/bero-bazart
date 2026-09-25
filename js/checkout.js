@@ -30,7 +30,7 @@ function renderSummary() {
     cart
       .map(
         (l) => `<div class="order-summary-line">
-        <span>${productDisplayName(l)} ${l.size || l.color ? `(${[l.size, l.color].filter(Boolean).join(" / ")})` : ""} × ${l.qty}</span>
+        <span>${escapeHTML(productDisplayName(l))} ${l.size || l.color ? `(${escapeHTML([l.size, l.color].filter(Boolean).join(" / "))})` : ""} × ${Number(l.qty) || 1}</span>
         <span>${fmtPrice(l.price * l.qty)}</span>
       </div>`
       )
@@ -48,6 +48,7 @@ function renderSummary() {
 
 function validateField(input) {
   const group = input.closest(".form-group");
+  if (!group) return true;
   const errorEl = group.querySelector(".field-error");
   const valid = input.value.trim().length > 0;
   group.classList.toggle("invalid", !valid);
@@ -69,6 +70,15 @@ async function submitOrder(e) {
   const cart = getCart();
   if (cart.length === 0) return;
 
+  // hidden trap field: real people never fill it, bots do. Pretend success and drop the order.
+  if (form.website && form.website.value) {
+    localStorage.removeItem(CART_KEY);
+    updateCartBadge();
+    document.getElementById("checkoutPage").style.display = "none";
+    document.getElementById("successPage").style.display = "block";
+    return;
+  }
+
   const submitBtn = form.querySelector("button[type=submit]");
   submitBtn.disabled = true;
   submitBtn.textContent = t("loading");
@@ -77,7 +87,9 @@ async function submitOrder(e) {
   const total = subtotal + DELIVERY_FEE;
 
   // items are always saved in French, regardless of the site's current language
+  // (the database re-checks every price, so only the product id, options and quantity matter here)
   const itemsFr = cart.map((l) => ({
+    id: l.id,
     name: l.name_fr,
     size: l.size,
     color: l.color,
@@ -101,7 +113,7 @@ async function submitOrder(e) {
 
   if (error) {
     console.error(error);
-    alert(t("admin_error_generic"));
+    alert(String(error.message).includes("rate_limited") ? t("order_rate_limited") : t("admin_error_generic"));
     submitBtn.disabled = false;
     submitBtn.textContent = t("checkout_submit");
     return;

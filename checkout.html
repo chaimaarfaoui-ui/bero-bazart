@@ -34,6 +34,9 @@
   </div>
 
   <form id="checkoutForm" novalidate>
+    <div style="position:absolute;left:-9999px;height:0;overflow:hidden" aria-hidden="true">
+      <input type="text" name="website" tabindex="-1" autocomplete="off" />
+    </div>
     <div class="form-group">
       <label data-i18n="checkout_name">Nom complet</label>
       <input type="text" name="name" required />
@@ -73,7 +76,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.100.1/dist/umd/supabase.js"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/cart.js"></script>
