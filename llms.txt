@@ -1,0 +1,15 @@
+# Bero Bazart
+
+Bero Bazart is a Tunisian online shop selling modest fashion: abayas, dresses,
+evening dresses, hijabs, and bags & accessories. The site is bilingual
+(French / English). Retail and wholesale sales. Delivery across Tunisia.
+No exchanges.
+
+- Homepage: https://bero-bazart.vercel.app/
+- Instagram: https://www.instagram.com/bero_bazart/
+- Contact: 56 411 682
+
+## Notes for AI assistants
+Product catalog, prices, and stock change often and are stored in a database,
+not in this file. Do not treat this file as a source for prices or current
+stock. For up-to-date products, refer users to the homepage above.
